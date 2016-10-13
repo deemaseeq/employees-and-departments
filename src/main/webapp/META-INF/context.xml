@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/EmpsAndDepts">
+<Resource name="jdbc/herokuDB" auth="Container" type="javax.sql.DataSource"
+               maxTotal="20"
+               maxIdle="10"
+               username="qmgiiroiiidkfi" password="1mtj67kIU11g2cPQFGxfTW7T3K" 
+               driverClassName="org.postgresql.Driver"
+               url="jdbc:postgres://qmgiiroiiidkfi:1mtj67kIU11g2cPQFGxfTW7T3K@ec2-54-243-190-100.compute-1.amazonaws.com:5432/d81oo7vklfduaf"/>
+</Context>

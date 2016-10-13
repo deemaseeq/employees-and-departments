@@ -1,0 +1,27 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 17.07.2016, 13:34:46
+    Author     : ДмитрийГ
+*/
+
+
+.header {
+    font: x-large/110% "Open Sans";
+}
+
+.depts-section {
+    position: fixed;
+}
+
+.emps-section {
+    position: relative;
+    left: 33%;
+}
+
+.add-button {
+    width: 75%;
+}

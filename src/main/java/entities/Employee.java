@@ -5,8 +5,6 @@
  */
 package entities;
 
-import java.util.Date;
-
 /**
  *
  * @author ДмитрийГ
@@ -15,7 +13,7 @@ public class Employee {
     int employeeId;
     String employeeName;
     String employeeEmail;
-    Date employeeHireDate;
+    String employeeHireDate;
     double employeeSalary;
     String employeeDepartment;
     int employeeDepartmentId;
@@ -51,7 +49,7 @@ public class Employee {
         return employeeEmail;
     }
 
-    public Date getEmployeeHireDate() {
+    public String getEmployeeHireDate() {
         return employeeHireDate;
     }
 
@@ -63,7 +61,7 @@ public class Employee {
         this.employeeEmail = employeeEmail;
     }
 
-    public void setEmployeeHireDate(Date employeeHireDate) {
+    public void setEmployeeHireDate(String employeeHireDate) {
         this.employeeHireDate = employeeHireDate;
     }
 

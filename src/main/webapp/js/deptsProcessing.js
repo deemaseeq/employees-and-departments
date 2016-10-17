@@ -40,7 +40,9 @@ function deptEdit(deptRow) {
     
     document.getElementById('edit-department-message').textContent = 
             'You are going to edit data of department with id ' + deptId + ' and name ' + deptName;
+    
     document.getElementById('edit-department-id').value = deptId;
+    document.getElementById('edit-department-name').value = deptName;
     
     document.getElementById('edit-department-modal').style.display = 'block';
 }

@@ -35,12 +35,20 @@ function empDelete(empRow) {
 }
 
 function empEdit(empRow) {
-    var empName = empRow.cells[1].innerHTML;
     var empId = empRow.cells[0].innerHTML;
+    var empName = empRow.cells[1].innerHTML;
+    var empEmail = empRow.cells[2].innerHTML;
+    var empHireDate = empRow.cells[3].innerHTML;
+    var empSalary = empRow.cells[4].innerHTML;
     
     document.getElementById('edit-employee-message').textContent =
             'You are going to edit data of employee with id ' + empId + ' and name ' + empName;
+    
     document.getElementById('edit-employee-id').value = empId;
+    document.getElementById('edit-employee-name').value = empName;
+    document.getElementById('edit-employee-email').value = empEmail;
+    document.getElementById('edit-employee-date').value = empHireDate;
+    document.getElementById('edit-employee-salary').value = empSalary;
     
     document.getElementById('edit-employee-modal').style.display = 'block';
 }

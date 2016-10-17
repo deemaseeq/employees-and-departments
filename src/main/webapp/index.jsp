@@ -68,7 +68,7 @@
                         <input class="w3-input w3-border" type="email" name="email">
 
                         <label>Hire date</label>
-                        <input class="w3-input w3-border" type="date" name="hireDate">
+                        <input class="w3-input w3-border" type="text" name="hireDate">
 
                         <label>Salary</label>
                         <input class="w3-input w3-border" type="text" name="salary">
@@ -136,7 +136,7 @@
                         <input class="w3-input w3-border" type="email" name="email">
 
                         <label>Hire date</label>
-                        <input class="w3-input w3-border" type="date" name="hireDate">
+                        <input class="w3-input w3-border" type="text" name="hireDate">
 
                         <label>Salary</label>
                         <input class="w3-input w3-border" type="text" name="salary">
@@ -194,11 +194,11 @@
                     <th></th>
                     <th></th>
                 </tr>
-
+                
                 <c:forEach var="department" items="${departments}">
                     <tr>
-                        <td><c:out value="${department.getDepartmentId()}" /></td>
-                        <td onclick="deptSelection(this)"><c:out value="${department.getDepartmentName()}" /></td>
+                        <td><c:out value="${department.getDepartmentId()}" default="none" escapeXml="true"></c:out></td>
+                        <td onclick="deptSelection(this)"><c:out value="${department.getDepartmentName()}" default="none" escapeXml="true"></c:out></td>
                         <td class="w3-hover-text-orange" onclick="deptEdit(this.parentNode)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></td>
                         <td class="w3-hover-text-red" onclick="deptDelete(this.parentNode)" ><i class="fa fa-times" aria-hidden="true"></i></td>
                     </tr>

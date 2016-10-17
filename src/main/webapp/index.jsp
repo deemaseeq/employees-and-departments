@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="lib/w3css/w3.css">
         <link rel="stylesheet" href="style.css" type="text/css"/>
         <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css" />
 
     </head>
 
@@ -37,10 +38,10 @@
                 </header>
 
                 <div class="w3-container">
-                    <form id="addDepartment" class="w3-container w3-margin-16" action="DepartmentsAddingServlet" method="post">
+                    <form data-toggle="validation" role="form" id="addDepartment" class="w3-container w3-margin-16" action="DepartmentsAddingServlet" method="post">
 
                         <label>Enter name of new department</label>
-                        <input class="w3-input w3-border" type="text" name="newName">
+                        <input id="add-department-name" class="w3-input w3-border" type="text" name="newName" required>
                         <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">Submit</button>
 
                     </form>
@@ -62,19 +63,21 @@
                     <form id="addEmployee" class="w3-container w3-margin-16" action="EmployeesAddingServlet" method="post">
 
                         <label>Name</label>
-                        <input class="w3-input w3-border" type="text" name="name">
+                        <input class="w3-input w3-border" type="text" name="name" required>
 
                         <label>Email</label>
-                        <input class="w3-input w3-border" type="email" name="email">
+                        <input class="w3-input w3-border" type="email" name="email" required>
 
                         <label>Hire date</label>
-                        <input class="w3-input w3-border" type="text" name="hireDate">
+                        <input id="add-employee-date" class="w3-input w3-border" type="text" name="hireDate" required>
+                        <label id="add-employee-date-error" class="w3-small w3-text-red"></label>
+                        <p></p>
 
                         <label>Salary</label>
-                        <input class="w3-input w3-border" type="text" name="salary">
+                        <input class="w3-input w3-border" type="number" name="salary" required>
 
                         <label>Department</label>
-                        <select class="w3-select" name="department">
+                        <select id="add-employee-department" class="w3-select" name="department" required>
                             <option value="" disabled selected>Choose department...</option>
                             <c:forEach var="department" items="${departments}">
                                 <option><c:out value="${department.getDepartmentName()}" /></option>
@@ -105,7 +108,7 @@
                         <input id="edit-department-id" type="hidden" name="id">
                         
                         <label>Enter new name of department</label>
-                        <input id="edit-department-name" class="w3-input w3-border" type="text" name="newName">
+                        <input id="edit-department-name" class="w3-input w3-border" type="text" name="newName" required>
                         <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">Submit</button>
 
                     </form>
@@ -130,19 +133,21 @@
                         <input id="edit-employee-id" type="hidden" name="id">
                         
                         <label>Name</label>
-                        <input id="edit-employee-name" class="w3-input w3-border" type="text" name="name">
+                        <input id="edit-employee-name" class="w3-input w3-border" type="text" name="name" required>
 
                         <label>Email</label>
-                        <input id="edit-employee-email" class="w3-input w3-border" type="email" name="email">
+                        <input id="edit-employee-email" class="w3-input w3-border" type="email" name="email" required>
 
                         <label>Hire date</label>
-                        <input id="edit-employee-date" class="w3-input w3-border" type="text" name="hireDate">
+                        <input id="edit-employee-date" class="w3-input w3-border" type="text" name="hireDate" required>
+                        <label id="edit-employee-date-error" class="w3-small w3-text-red"></label>
+                        <p></p>
 
                         <label>Salary</label>
-                        <input id="edit-employee-salary" class="w3-input w3-border" type="text" name="salary">
+                        <input id="edit-employee-salary" class="w3-input w3-border" type="number" name="salary" required>
 
                         <label>Department</label>
-                        <select class="w3-select" name="department">
+                        <select class="w3-select" name="department" required>
                             <option value="" disabled selected>Choose department...</option>
                             <c:forEach var="department" items="${departments}">
                                 <option><c:out value="${department.getDepartmentName()}" /></option>
@@ -152,25 +157,6 @@
                         <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">Submit</button>
 
                     </form>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="delete-employee-modal" class="w3-modal">
-            <div class="w3-modal-content w3-card-8">
-
-                <header class="w3-container w3-blue-grey"> 
-                    <span onclick="document.getElementById('delete-employee-modal').style.display = 'none'" 
-                          class="w3-closebtn">&times;</span>
-                    <h2>Warning</h2>
-                </header>
-
-                <div class="w3-container w3-padding-8">
-                    <label class="w3-large w3-center">Are you sure?</label>
-
-                    <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">No</button>
-                    <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">Yes</button>
                 </div>
 
             </div>
@@ -253,11 +239,14 @@
             </table>
 
             <div class="w3-margin-8 w3-center">
-                <button class="w3-btn w3-blue-grey add-button" onclick="document.getElementById('add-employee-modal').style.display = 'block'">Add</button>
+                <button class="w3-btn w3-blue-grey add-button" onclick="empAdd()">Add</button>
             </div>
 
         </section>
 
+        <script src="lib/bootstrap/bootstrap.min.js"></script>
+        <script src="lib/bootstrap-validation/validator.min.js"></script>
+        <script src="lib/bootstrap-validation/validator.js"></script>
         <script src="lib/jquery/jquery-2.1.3.min.js"></script>
         <script src ="js/deptsFilter.js"></script>
         <script src="js/deptsProcessing.js"></script>

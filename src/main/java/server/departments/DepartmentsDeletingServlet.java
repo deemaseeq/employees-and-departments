@@ -46,7 +46,7 @@ public class DepartmentsDeletingServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/plain;charset=UTF-8");
 
-        String id = request.getParameter("id");
+        int id = Integer.valueOf(request.getParameter("id"));
 
         try {
             Interaction.deleteDepartment(id);

@@ -46,12 +46,12 @@ public class EmployeesDeletingServlet extends HttpServlet {
             throws ServletException, IOException{
         response.setContentType("text/plain;charset=UTF-8");
         
-        String id = request.getParameter("id");
+        int id = Integer.valueOf(request.getParameter("id"));
         
         try {
             Interaction.deleteEmployee(id);
             try (PrintWriter out = response.getWriter()) {
-                    out.println("Succesful delete.");
+                    out.println("Succesful delete");
                 }
         } catch (SQLException ex) {
             try (PrintWriter out = response.getWriter()) {

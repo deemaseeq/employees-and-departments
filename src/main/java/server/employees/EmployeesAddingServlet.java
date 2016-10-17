@@ -69,7 +69,7 @@ public class EmployeesAddingServlet extends HttpServlet {
             newEmployee.setEmployeeName(request.getParameter("name"));
             newEmployee.setEmployeeDepartmentId(newEmployeeDeptId);
             newEmployee.setEmployeeDepartment(request.getParameter("department"));
-            newEmployee.setEmployeeHireDate(Date.valueOf(request.getParameter("hireDate")));
+            newEmployee.setEmployeeHireDate(request.getParameter("hireDate"));
             newEmployee.setEmployeeSalary(Double.parseDouble(request.getParameter("salary")));
 
             Interaction.addEmployee(newEmployee);

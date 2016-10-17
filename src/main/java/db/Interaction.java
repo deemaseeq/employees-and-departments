@@ -115,7 +115,7 @@ public class Interaction {
                 employee.setEmployeeId(resultSet.getInt("employee_id"));
                 employee.setEmployeeName(resultSet.getString("employee_name"));
                 employee.setEmployeeEmail(resultSet.getString("employee_email"));
-                employee.setEmployeeHireDate(resultSet.getDate("employee_hire_date"));
+                employee.setEmployeeHireDate(resultSet.getString("employee_hire_date"));
                 employee.setEmployeeSalary(resultSet.getDouble("employee_salary"));
                 employee.setEmployeeDepartment(resultSet.getString("department_name"));
                 employee.setEmployeeDepartmentId(resultSet.getInt("employee_department_id"));
@@ -186,9 +186,11 @@ public class Interaction {
                         "INSERT INTO \"emps-and-depts\".\"employee\" VALUES (DEFAULT,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, employee.getEmployeeName());
             statement.setString(2, employee.getEmployeeEmail());
-            statement.setString(3, employee.getEmployeeHireDate().toString());
+            statement.setDate(3, Date.valueOf(employee.getEmployeeHireDate()));
             statement.setDouble(4, employee.getEmployeeSalary());
             statement.setInt(5, employee.getEmployeeDepartmentId());
+            
+            System.out.println("\n\n\nHERE IS STATEMENT:\n" + statement + "\n\n\n");
 
             int affectedRows = statement.executeUpdate();
 
@@ -215,11 +217,13 @@ public class Interaction {
         }
     }
 
-    public static void deleteDepartment(String id) throws SQLException {
+    public static void deleteDepartment(int id) throws SQLException {
         try (Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "DELETE FROM \"emps-and-depts\".\"department\" WHERE department_id = ?", Statement.RETURN_GENERATED_KEYS);) {
-            statement.setString(1, id);
+            statement.setInt(1, id);
+            
+            System.out.println(statement);
 
             int affectedRows = statement.executeUpdate();
 
@@ -229,14 +233,14 @@ public class Interaction {
         }
     }
 
-    public static void deleteEmployee(String id) throws SQLException {
+    public static void deleteEmployee(int id) throws SQLException {
 
         try (Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "DELETE FROM \"emps-and-depts\".\"employee\" WHERE employee_id = ?",
                         Statement.RETURN_GENERATED_KEYS);) {
 
-            statement.setString(1, id);
+            statement.setInt(1, id);
 
             int affectedRows = statement.executeUpdate();
 
@@ -268,13 +272,13 @@ public class Interaction {
 
         try (Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE \"emps=and-depts\".\"employee\" SET " + "employee_name = ?, "
+                        "UPDATE \"emps-and-depts\".\"employee\" SET " + "employee_name = ?, "
                         + "employee_email = ?, " + "employee_hire_date = ?, " + "employee_salary = ?, "
                         + "employee_department_id = ? " + "WHERE employee_id = ?;", Statement.RETURN_GENERATED_KEYS);) {
 
             statement.setString(1, employee.getEmployeeName());
             statement.setString(2, employee.getEmployeeEmail());
-            statement.setString(3, employee.getEmployeeHireDate().toString());
+            statement.setDate(3, Date.valueOf(employee.getEmployeeHireDate()));
             statement.setDouble(4, employee.getEmployeeSalary());
             statement.setInt(5, employee.getEmployeeDepartmentId());
             statement.setInt(6, employee.getEmployeeId());

@@ -59,7 +59,7 @@ public class EmployeesEditingServlet extends HttpServlet {
             editableEmployee.setEmployeeName(request.getParameter("name"));
             editableEmployee.setEmployeeDepartmentId(employeeDeptId);
             editableEmployee.setEmployeeDepartment(request.getParameter("department"));
-            editableEmployee.setEmployeeHireDate(Date.valueOf(request.getParameter("hireDate")));
+            editableEmployee.setEmployeeHireDate(request.getParameter("hireDate"));
             editableEmployee.setEmployeeSalary(Double.parseDouble(request.getParameter("salary")));
 
             Interaction.editEmployee(editableEmployee);

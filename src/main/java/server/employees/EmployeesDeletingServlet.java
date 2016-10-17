@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server.employees;
 
 import db.Interaction;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,14 +44,22 @@ public class EmployeesDeletingServlet extends HttpServlet {
     
     protected void tryDeleteEmployee (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException{
+        response.setContentType("text/plain;charset=UTF-8");
         
         String id = request.getParameter("id");
         
-        Interaction.deleteEmployee(id);
-        response.setContentType("text/plain;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-                    out.println("Succesful delete");
+        try {
+            Interaction.deleteEmployee(id);
+            try (PrintWriter out = response.getWriter()) {
+                    out.println("Succesful delete.");
                 }
+        } catch (SQLException ex) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Failed to access database. Please try again later.");
+            }
+            Logger.getLogger(EmployeesDeletingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     /**
@@ -83,15 +89,5 @@ public class EmployeesDeletingServlet extends HttpServlet {
             throws ServletException, IOException {
         tryDeleteEmployee(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server.departments;
 
 import db.Interaction;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,7 @@ public class DepartmentsDeletingServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DepartmentsDeletingServlet</title>");            
+            out.println("<title>Servlet DepartmentsDeletingServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet DepartmentsDeletingServlet at " + request.getContextPath() + "</h1>");
@@ -43,16 +41,24 @@ public class DepartmentsDeletingServlet extends HttpServlet {
             out.println("</html>");
         }
     }
-    
+
     protected void tryDeleteDepartment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("id");
-        
-        Interaction.deleteDepartment(id);
         response.setContentType("text/plain;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-                    out.println("Succesful delete");
-                }
+
+        String id = request.getParameter("id");
+
+        try {
+            Interaction.deleteDepartment(id);
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Succesful delete");
+            }
+        } catch (SQLException ex) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Failed to access database. Please try again later.");
+            }
+            Logger.getLogger(DepartmentsDeletingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -82,15 +88,5 @@ public class DepartmentsDeletingServlet extends HttpServlet {
             throws ServletException, IOException {
         tryDeleteDepartment(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

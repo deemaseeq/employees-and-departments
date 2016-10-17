@@ -1,16 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server.departments;
 
 import db.Interaction;
 import entities.Department;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -49,18 +47,19 @@ public class DepartmentsAddingServlet extends HttpServlet {
 
     protected void tryAddDepartment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/plain;charset=UTF-8");
+
         String newName = request.getParameter("newName");
 
         List departments = Interaction.getDepartments();
 
         for (Object dept : departments) {
             if (((Department) dept).getDepartmentName().equals(newName)) {
-                response.setContentType("text/plain;charset=UTF-8");
-                
+
                 try (PrintWriter out = response.getWriter()) {
-                    out.println("Already exist");
+                    out.println("Department with this name already exist.");
                 }
-                
+
                 return;
             }
         }
@@ -69,11 +68,18 @@ public class DepartmentsAddingServlet extends HttpServlet {
         newDepartment.setDepartmentName(newName);
         newDepartment.setDepartmentId(departments.size() + 1);
 
-        Interaction.addDepartment(newDepartment);
-        response.setContentType("text/plain;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-                    out.println("Succesful addition");
-                }
+        try {
+            Interaction.addDepartment(newDepartment);
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Succesful addition");
+            }
+        } catch (SQLException ex) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Failed to access database. Please try again later.");
+            }
+            Logger.getLogger(DepartmentsAddingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**
@@ -103,15 +109,5 @@ public class DepartmentsAddingServlet extends HttpServlet {
             throws ServletException, IOException {
         tryAddDepartment(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

@@ -9,6 +9,9 @@ import db.Interaction;
 import entities.Department;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,16 +50,24 @@ public class DepartmentsEditingServlet extends HttpServlet {
     
     protected void tryEditDepartment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/plain;charset=UTF-8");
         
         Department editableDepartment = new Department();
         editableDepartment.setDepartmentName(request.getParameter("newName"));
         editableDepartment.setDepartmentId(Integer.parseInt(request.getParameter("id")));
 
-        Interaction.editDepartment(editableDepartment);
-        response.setContentType("text/plain;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try {
+            Interaction.editDepartment(editableDepartment);
+            try (PrintWriter out = response.getWriter()) {
                     out.println("Succesful editing");
                 }
+        } catch (SQLException ex) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("Failed to access database. Please try again later.");
+            }
+            Logger.getLogger(DepartmentsEditingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     /**
@@ -86,15 +97,4 @@ public class DepartmentsEditingServlet extends HttpServlet {
             throws ServletException, IOException {
         tryEditDepartment(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

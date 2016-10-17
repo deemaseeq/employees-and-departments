@@ -105,7 +105,7 @@
                         <input id="edit-department-id" type="hidden" name="id">
                         
                         <label>Enter new name of department</label>
-                        <input class="w3-input w3-border" type="text" name="newName">
+                        <input id="edit-department-name" class="w3-input w3-border" type="text" name="newName">
                         <button class="w3-btn w3-blue-grey w3-margin-16 w3-right" type="submit">Submit</button>
 
                     </form>
@@ -130,16 +130,16 @@
                         <input id="edit-employee-id" type="hidden" name="id">
                         
                         <label>Name</label>
-                        <input class="w3-input w3-border" type="text" name="name">
+                        <input id="edit-employee-name" class="w3-input w3-border" type="text" name="name">
 
                         <label>Email</label>
-                        <input class="w3-input w3-border" type="email" name="email">
+                        <input id="edit-employee-email" class="w3-input w3-border" type="email" name="email">
 
                         <label>Hire date</label>
-                        <input class="w3-input w3-border" type="text" name="hireDate">
+                        <input id="edit-employee-date" class="w3-input w3-border" type="text" name="hireDate">
 
                         <label>Salary</label>
-                        <input class="w3-input w3-border" type="text" name="salary">
+                        <input id="edit-employee-salary" class="w3-input w3-border" type="text" name="salary">
 
                         <label>Department</label>
                         <select class="w3-select" name="department">

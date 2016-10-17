@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package db;
 
 import entities.Department;
@@ -16,7 +11,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import org.postgresql.Driver;
 
 /**
  *
@@ -25,105 +19,94 @@ import org.postgresql.Driver;
 public class Interaction {
 
     static String driver = "org.postgresql.Driver";
-    static String url = "jdbc:postgres://qmgiiroiiidkfi:1mtj67kIU11g2cPQFGxfTW7T3K@ec2-54-243-190-100.compute-1.amazonaws.com:5432/d81oo7vklfduaf";
+    static String url = "jdbc:postgres://ufxsylltsbzpct:km7VpRxnMqaIKIdiiwz9Dsf6me@ec2-54-75-233-22.eu-west-1.compute.amazonaws.com:5432/dnk684j6s0914";
 
-    static String user = "qmgiiroiiidkfi";
-    static String pass = "1mtj67kIU11g2cPQFGxfTW7T3K";
-
-    public static boolean employeeExist(String email) {
-        Connection connection = null;
-        boolean result = false;
+    static String user = "ufxsylltsbzpct";
+    static String pass = "km7VpRxnMqaIKIdiiwz9Dsf6me";
+    
+    static private Connection createConnection() throws SQLException{
+        
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException ex) {
+            System.out.println("\nDRIVER NOT FOUND.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        DataSource datasource;
 
         try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            datasource = (DataSource) envContext.lookup("jdbc/herokuDB");
+        } catch (NamingException e) {
+            System.out.println("\nNAMING EXCEPTION.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, e);
+            return null;
+        }
+        
+        if(datasource == null) {
+            System.out.println("\nDATASOURCE PROBLEMS.\n");
+            return null;
+        }
+        
+        Connection newConnection = datasource.getConnection();
+        
+        return newConnection;
+    }
 
-            Class.forName(driver);
-            // System.out.println("Драйвер подключен");
+    public static boolean employeeExist(String email) {
 
-            connection = DriverManager.getConnection(url, user, pass);
-            // System.out.println("Соединение установлено");
+        boolean result = false;
 
-            Statement statement;
+        try(Connection connection = createConnection()) {
 
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
+            
             ResultSet resultSet = statement
-                    .executeQuery("SELECT * FROM employee WHERE employee_email = '" + email + "'");
+                    .executeQuery("SELECT * FROM \"emps-and-depts\".\"employee\" WHERE employee_email = '" + email + "'");
 
             result = resultSet.next();
 
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        } catch (SQLException e) {
+            System.out.println("\nPROBLEMS WITH DATABASE CONNECTION.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return result;
     }
 
     public static boolean departmentExist(String name) {
-        Connection connection = null;
+        
         boolean result = false;
 
-        try {
-
-            Class.forName(driver);
-            // System.out.println("Драйвер подключен");
-
-            connection = DriverManager.getConnection(url, user, pass);
-            // System.out.println("Соединение установлено");
-
+        try(Connection connection = createConnection()) {
+         
             Statement statement;
 
             statement = connection.createStatement();
             ResultSet resultSet = statement
-                    .executeQuery("SELECT * FROM department WHERE department_name = '" + name + "'");
+                    .executeQuery("SELECT * FROM \"emps-and-depts\".\"department\" WHERE department_name = '" + name + "'");
 
             result = resultSet.next();
 
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        } catch (SQLException e) {
+            System.out.println("\nPROBLEMS WITH DATABASE CONNECTION.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, e);
         }
-
+        
         return result;
     }
 
-    public static List getEmployees() {
-        Connection connection = null;
+    public static List getEmployees() throws SQLException {
         List result = null;
 
-        try {
+        try(Connection connection = createConnection()) {
 
-            Class.forName(driver);
-            // System.out.println("Драйвер подключен");
-
-            Context initContext = new InitialContext();
-            Context envContext = (Context) initContext.lookup("java:/comp/env");
-            DataSource datasource = (DataSource) envContext.lookup("jdbc/herokuDB");
-
-            connection = datasource.getConnection();
-
-//			connection = DriverManager.getConnection(url, user, pass);
-            // System.out.println("Соединение установлено");
-            Statement statement;
-
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
+            
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT e.* ,d.department_name FROM employee as e,department as d WHERE e.employee_department_id = d.department_id;");
+                    "SELECT e.* ,d.department_name FROM \"emps-and-depts\".\"employee\" as e,\"emps-and-depts\".\"department\" as d WHERE e.employee_department_id = d.department_id;");
 
             result = new ArrayList<>();
 
@@ -139,46 +122,25 @@ public class Interaction {
                 result.add(employee);
             }
 
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        } catch (SQLException e) {
+            System.out.println("\nPROBLEMS WITH DATABASE CONNECTION.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, e);
         }
-
+        
         return result;
     }
 
-    public static Department getDepartment(String name) {
-        
-        Connection connection = null;
+    public static Department getDepartment(String name) throws SQLException {
+
         Department result = null;
 
-        try {
-
-            Class.forName(driver);
-            // System.out.println("Драйвер подключен");
+        try(Connection connection = createConnection()) {
             
-            Context initContext = new InitialContext();
-            Context envContext = (Context) initContext.lookup("java:/comp/env");
-            DataSource datasource = (DataSource) envContext.lookup("jdbc/herokuDB");
-
-            connection = datasource.getConnection();
-
-//            connection = DriverManager.getConnection(url, user, pass);
-            // System.out.println("Соединение установлено");
-
             Statement statement;
 
             statement = connection.createStatement();
             ResultSet resultSet = statement
-                    .executeQuery("SELECT * FROM department WHERE department_name = '" + name + "'");
+                    .executeQuery("SELECT * FROM \"emps-and-depts\".department WHERE department_name = '" + name + "'");
 
             result = new Department();
 
@@ -186,39 +148,19 @@ public class Interaction {
                 result.setDepartmentId(resultSet.getInt("department_id"));
                 result.setDepartmentName(resultSet.getString("department_name"));
             }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
         }
-
         return result;
     }
 
     public static List getDepartments() {
-        Connection connection = null;
+        
         List result = null;
+        
+        try(Connection connection = createConnection()) {
 
-        try {
-
-            Class.forName(driver);
-            // System.out.println("Драйвер подключен");
-
-            connection = DriverManager.getConnection(url, user, pass);
-            // System.out.println("Соединение установлено");
-
-            Statement statement;
-
-            statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM department");
+            Statement statement = connection.createStatement();
+ 
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM \"emps-and-depts\".\"department\"");
 
             result = new ArrayList<>();
 
@@ -229,80 +171,54 @@ public class Interaction {
                 result.add(department);
             }
 
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        } catch (SQLException e) {
+            System.out.println("\nPROBLEMS WITH DATABASE CONNECTION.\n");
+            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return result;
     }
 
-    public static void addEmployee(Employee employee) {
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+    public static void addEmployee(Employee employee) throws SQLException {
+        
+        try (Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO employee VALUES (DEFAULT,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);) {
+                        "INSERT INTO \"emps-and-depts\".\"employee\" VALUES (DEFAULT,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, employee.getEmployeeName());
             statement.setString(2, employee.getEmployeeEmail());
             statement.setString(3, employee.getEmployeeHireDate().toString());
-            statement.setString(4, Double.toString(employee.getEmployeeSalary()));
-            statement.setString(5, Integer.toString(employee.getEmployeeDepartmentId()));
+            statement.setDouble(4, employee.getEmployeeSalary());
+            statement.setInt(5, employee.getEmployeeDepartmentId());
 
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new SQLException("Creating user failed, no rows affected.");
-            }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static void addDepartment(Department department) {
-        Connection connection = null;
-
-        try {
-
-            Class.forName(driver);
-            System.out.println("Драйвер подключен");
-
-            connection = DriverManager.getConnection(url, user, pass);
-            System.out.println("Соединение установлено");
-
-            Statement statement;
-
-            String query = "INSERT INTO department VALUES (" + department.getDepartmentId() + ", '"
-                    + department.getDepartmentName() + "');";
-
-            statement = connection.createStatement();
-            statement.executeUpdate(query);
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                throw new SQLException("Adding employee failed, no rows affected.");
             }
         }
     }
 
-    public static void deleteDepartment(String id) {
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+    public static void addDepartment(Department department) throws SQLException {
+
+        try(Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "DELETE FROM department WHERE department_id = ?", Statement.RETURN_GENERATED_KEYS);) {
+                        "INSERT INTO \"emps-and-depts\".\"department\" VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);) {
+
+            statement.setInt(1, department.getDepartmentId());
+            statement.setString(2, department.getDepartmentName());
+            
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Adding employee failed, no rows affected.");
+            } 
+        }
+    }
+
+    public static void deleteDepartment(String id) throws SQLException {
+        try (Connection connection = createConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "DELETE FROM \"emps-and-depts\".\"department\" WHERE department_id = ?", Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, id);
 
             int affectedRows = statement.executeUpdate();
@@ -310,17 +226,14 @@ public class Interaction {
             if (affectedRows == 0) {
                 throw new SQLException("Deleting department failed, no rows affected.");
             }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void deleteEmployee(String id) {
+    public static void deleteEmployee(String id) throws SQLException {
 
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
-                PreparedStatement statement = connection.prepareStatement("DELETE FROM employee WHERE employee_id = ?",
+        try (Connection connection = createConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "DELETE FROM \"emps-and-depts\".\"employee\" WHERE employee_id = ?",
                         Statement.RETURN_GENERATED_KEYS);) {
 
             statement.setString(1, id);
@@ -330,58 +243,47 @@ public class Interaction {
             if (affectedRows == 0) {
                 throw new SQLException("Deleting employee failed, no rows affected.");
             }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void editDepartment(Department department) {
+    public static void editDepartment(Department department) throws SQLException {
 
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+        try (Connection connection = createConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE department SET " + "department_name = ? " + "WHERE department_id = ?;",
+                        "UPDATE \"emps-and-depts\".\"department\" SET " + "department_name = ? " + "WHERE department_id = ?;",
                         Statement.RETURN_GENERATED_KEYS);) {
 
             statement.setString(1, department.getDepartmentName());
-            statement.setString(2, Integer.toString(department.getDepartmentId()));
+            statement.setInt(2, department.getDepartmentId());
 
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
                 throw new SQLException("Editing department failed, no rows affected.");
             }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void editEmployee(Employee employee) {
+    public static void editEmployee(Employee employee) throws SQLException {
 
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
-                PreparedStatement statement = connection.prepareStatement("UPDATE employee SET " + "employee_name = ?, "
+        try (Connection connection = createConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE \"emps=and-depts\".\"employee\" SET " + "employee_name = ?, "
                         + "employee_email = ?, " + "employee_hire_date = ?, " + "employee_salary = ?, "
                         + "employee_department_id = ? " + "WHERE employee_id = ?;", Statement.RETURN_GENERATED_KEYS);) {
 
             statement.setString(1, employee.getEmployeeName());
             statement.setString(2, employee.getEmployeeEmail());
             statement.setString(3, employee.getEmployeeHireDate().toString());
-            statement.setString(4, Double.toString(employee.getEmployeeSalary()));
-            statement.setString(5, Integer.toString(employee.getEmployeeDepartmentId()));
-            statement.setString(6, Integer.toString(employee.getEmployeeId()));
+            statement.setDouble(4, employee.getEmployeeSalary());
+            statement.setInt(5, employee.getEmployeeDepartmentId());
+            statement.setInt(6, employee.getEmployeeId());
 
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
                 throw new SQLException("Editing employee failed, no rows affected.");
             }
-
-        } catch (Exception ex) {
-            // выводим наиболее значимые сообщения
-            Logger.getLogger(Interaction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

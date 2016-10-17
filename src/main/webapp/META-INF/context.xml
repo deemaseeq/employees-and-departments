@@ -3,7 +3,7 @@
 <Resource name="jdbc/herokuDB" auth="Container" type="javax.sql.DataSource"
                maxTotal="20"
                maxIdle="10"
-               username="qmgiiroiiidkfi" password="1mtj67kIU11g2cPQFGxfTW7T3K" 
+               username="ufxsylltsbzpct" password="km7VpRxnMqaIKIdiiwz9Dsf6me" 
                driverClassName="org.postgresql.Driver"
-               url="jdbc:postgres://qmgiiroiiidkfi:1mtj67kIU11g2cPQFGxfTW7T3K@ec2-54-243-190-100.compute-1.amazonaws.com:5432/d81oo7vklfduaf"/>
+               url="jdbc:postgresql://ec2-54-75-233-22.eu-west-1.compute.amazonaws.com:5432/dnk684j6s0914?ssl=true&amp;sslmode=require&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory"/>
 </Context>
